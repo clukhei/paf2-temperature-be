@@ -74,8 +74,8 @@ const mkTemperature = (params, fileName) => {
 	return {
 		ts: new Date() /* Timestamp.fromNumber(new Date().getTime()) */,
 		user: params.userName,
-		q1: params.q1,
-		q2: params.q2,
+		q1: params.q1 == "true" ? true: false,
+		q2: params.q2 == "true"? true: false,
         temperature: params.temperature,
         image: fileName
         
