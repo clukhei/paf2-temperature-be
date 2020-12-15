@@ -50,6 +50,7 @@ router.post("/temperature", multipart.single("imgFile"), async (req, res) => {
         Bucket: AWS_S3_BUCKETNAME,
         Key: req.file.filename,
         Body: imgFile,
+        ACL: 'public-read'
     };
     //upload to s3
 	s3.putObject(params, (error, result) => {
@@ -61,7 +62,6 @@ router.post("/temperature", multipart.single("imgFile"), async (req, res) => {
 	    .db(DATABASE)
 	    .collection(COLLECTION)
 	    .insertOne(doc)
-	    console.log(result)
 
 	res.status(200);
 	res.type("application/json");
