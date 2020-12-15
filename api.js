@@ -36,6 +36,20 @@ const readFilePromise = (path) => {
 	});
 };
 
+const putObjPromise = (filename, imgFile) => {
+    const params = {
+        Bucket: AWS_S3_BUCKETNAME,
+        Key: filename,//req.file.filename,
+        Body: imgFile,
+        ACL: 'public-read'
+    }
+    return new Promise((resolve, reject)=> {
+        s3.putObject(params, (error, result)=> {
+            if (error) reject(error)
+                else resolve(result)
+        })
+    })
+}
 
 router.post("/temperature", multipart.single("imgFile"), async (req, res) => {
 	//clean up res.on can be perform anypart of the code.
@@ -45,18 +59,9 @@ router.post("/temperature", multipart.single("imgFile"), async (req, res) => {
 			console.log("deleted uploads file");
 		});
     });
-    const imgFile = await readFilePromise(req.file.path)
-    const params = {
-        Bucket: AWS_S3_BUCKETNAME,
-        Key: req.file.filename,
-        Body: imgFile,
-        ACL: 'public-read'
-    };
-    //upload to s3
-	s3.putObject(params, (error, result) => {
-        if (error) console.log(error);
-        else console.log(result);
-    });
+    try{
+        const imgFile = await readFilePromise(req.file.path)
+    const uploadResult = await putObjPromise(req.file.filename, imgFile)
     const doc = mkTemperature(req.body, req.file.filename)
 	const result = await mongoClient
 	    .db(DATABASE)
@@ -66,7 +71,14 @@ router.post("/temperature", multipart.single("imgFile"), async (req, res) => {
 	res.status(200);
 	res.type("application/json");
 	res.json(result);
-});
+
+    }catch(e){
+        console.log(e)
+        res.status(500)
+        res.type('application/json')
+        res.json(e)
+    }
+    });
 
 const DATABASE = "take-temp-together";
 const COLLECTION = "temperature";
