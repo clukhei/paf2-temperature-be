@@ -1,0 +1,32 @@
+<div>
+    <h1>Search results : {{name}}</h1>
+    {{#if hasData}}
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">time</th>
+                <th scope="col">user</th>
+                <th scope="col">q1</th>
+                <th scope="col">q2</th>
+                <th scope="col">temperature</th>
+                <th scope="col">image</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {{#each data}} 
+            <tr>
+                <td>{{this._id}}</td>
+                <td>{{this.ts}}</td>
+                <td>{{this.user}}</td>
+                <td>{{this.q1}}</td>
+                <td>{{this.q2}}</td>
+                <td>{{this.temperature}}</td>
+                <td><img src="{{this.image}}" alt="image"></td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    {{/if}}
+</div>

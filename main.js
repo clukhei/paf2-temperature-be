@@ -1,6 +1,6 @@
 const express = require('express')
 const morgan = require('express')
-
+const hbs = require('express-handlebars')
 const mongoClient = require('./mongoClient')
 const { ObjectId, MongoClient, Timestamp } = require("mongodb");
 const bodyParser = require('body-parser')
@@ -12,14 +12,19 @@ const app = express()
 app.use(morgan('combined'))
 app.use(bodyParser.urlencoded({limit:'50mb', extended:true}))
 app.use(bodyParser.json({limit: '50mb'}))
+app.use(express.static(__dirname + '/static'))
+app.engine("hbs", hbs({defaultLayout: "default.hbs"}))
+app.set("view engine", "hbs")
 
 const PORT = parseInt(process.argv[2]) || parseInt(process.env.APP_PORT) || 3000
 
 app.use('/api', apiRouter)
+app.get('/', (req,res)=> {
 
-
-
-
+    res.status(200)
+    res.type('text/html')
+    res.render('index')
+})
 
 
 const p0 = new Promise(
