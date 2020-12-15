@@ -76,7 +76,7 @@ const mkTemperature = (params, fileName) => {
 		user: params.userName,
 		q1: params.q1 == "true" ? true: false,
 		q2: params.q2 == "true"? true: false,
-        temperature: params.temperature,
+        temperature: parseFloat(params.temperature),
         image: fileName
         
 	};
