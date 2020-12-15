@@ -1,8 +1,6 @@
 const express = require('express')
 const morgan = require('express')
-const AWS = require('aws-sdk')
-const multer = require('multer')
-const multerS3 = require('multer-s3')
+
 const mongoClient = require('./mongoClient')
 const { ObjectId, MongoClient, Timestamp } = require("mongodb");
 const bodyParser = require('body-parser')
@@ -24,13 +22,21 @@ app.use('/api', apiRouter)
 
 
 
-mongoClient
-    .connect()
+const p0 = new Promise(
+    (resolve,reject) => {
+        if(!!process.env.AWS_S3_ACCESS_KEY && !!process.env.AWS_S3_SECRET_ACCESSKEY)
+            resolve()
+            else 
+                reject(`S3 keys not found`)
+    }
+)
+const p1 = mongoClient.connect()
+
+Promise.all([p0,p1])
     .then(()=> {
         app.listen(PORT, ()=> {
             console.log(`${PORT} started`)
         })
-    })
-    .catch(e=> console.error("cannot connect to mongo", e))
+    }).catch(e=> console.error("cannot connect to mongo", e))
 
     
